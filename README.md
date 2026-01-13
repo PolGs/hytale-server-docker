@@ -2,6 +2,8 @@
 
 Production-ready Docker image for running Hytale dedicated servers. Built with Java 25 and optimized for Linux VPS deployment.
 
+**Docker Hub:** `p0lgs/hytale-server-docker`
+
 ## Features
 
 - Java 25 (Eclipse Temurin/Adoptium)
@@ -18,6 +20,45 @@ Production-ready Docker image for running Hytale dedicated servers. Built with J
 - Hytale game license
 
 ## Quick Start
+
+### Option A: Use Pre-Built Image (Recommended)
+
+Create `docker-compose.yml`:
+
+```yaml
+services:
+  hytale-server:
+    image: p0lgs/hytale-server-docker:latest
+    container_name: hytale-server
+    restart: unless-stopped
+
+    ports:
+      - "5520:5520/udp"
+
+    environment:
+      - JAVA_OPTS=-Xms2G -Xmx4G -XX:AOTCache=Server/HytaleServer.aot
+      - HYTALE_PORT=5520
+      - HYTALE_BIND=0.0.0.0
+
+    volumes:
+      - hytale-data:/hytale/Server
+
+    stdin_open: true
+    tty: true
+
+volumes:
+  hytale-data:
+```
+
+Then start:
+
+```bash
+docker compose up -d
+```
+
+Skip to **Step 3: Authenticate Server** below.
+
+### Option B: Build from Source
 
 ### 1. Clone and Build
 
@@ -159,10 +200,15 @@ sudo apt-get install docker-compose-plugin
 sudo ufw allow 5520/udp
 sudo ufw enable
 
-# Clone and start
-git clone https://github.com/PolGs/hytale-server-docker.git
-cd hytale-server-docker
-docker compose build
+# Create directory and docker-compose.yml
+mkdir hytale-server && cd hytale-server
+wget https://raw.githubusercontent.com/PolGs/hytale-server-docker/main/docker-compose.yml
+
+# Edit docker-compose.yml to use published image
+nano docker-compose.yml
+# Change 'build: .' to 'image: p0lgs/hytale-server-docker:latest'
+
+# Start server
 docker compose up -d
 
 # Authenticate
@@ -180,28 +226,39 @@ docker compose up -d
 
 ## Docker Hub
 
-### Publish
+Published at: **`p0lgs/hytale-server-docker`**
 
-```bash
-# Tag
-docker tag hytale-server:latest yourusername/hytale-server:latest
-docker tag hytale-server:latest yourusername/hytale-server:1.0.0
+### Using Pre-Built Image
 
-# Push
-docker login
-docker push yourusername/hytale-server:latest
-docker push yourusername/hytale-server:1.0.0
-```
-
-### Use Published Image
-
-Update `docker-compose.yml`:
+The image is available on Docker Hub. Simply use:
 
 ```yaml
 services:
   hytale-server:
-    image: yourusername/hytale-server:latest
-    # Remove 'build: .' line
+    image: p0lgs/hytale-server-docker:latest
+    # ... rest of config
+```
+
+Or pull directly:
+
+```bash
+docker pull p0lgs/hytale-server-docker:latest
+```
+
+### Building and Publishing (For Maintainers)
+
+```bash
+# Build
+docker compose build
+
+# Tag
+docker tag hytale-server:latest p0lgs/hytale-server-docker:latest
+docker tag hytale-server:latest p0lgs/hytale-server-docker:1.0.0
+
+# Login and push
+docker login
+docker push p0lgs/hytale-server-docker:latest
+docker push p0lgs/hytale-server-docker:1.0.0
 ```
 
 ## Common Commands
