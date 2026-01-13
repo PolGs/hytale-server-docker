@@ -36,11 +36,29 @@ cd hytaleserver-docker
 
 ### 2. Build the Image
 
-**IMPORTANT**: The first build will download the Hytale server files using the official downloader CLI. This requires authentication.
+**IMPORTANT**: The build process downloads Hytale server files using the official downloader CLI. **You must authenticate during the build!**
 
 ```bash
 docker-compose build
 ```
+
+**During the build, you'll see output like this:**
+
+```
+=> => # Or visit the following URL and enter the code:
+=> => # https://oauth.accounts.hytale.com/oauth2/device/verify
+=> => # Authorization code: gxETqUPb
+=> => # downloading latest ("release" patchline) to "/hytale/game.zip"
+```
+
+**Action required:**
+1. Open your browser and visit: `https://oauth.accounts.hytale.com/oauth2/device/verify`
+2. Enter the authorization code shown (e.g., `gxETqUPb`)
+3. Log in with your Hytale account
+4. The build will continue automatically after authentication
+5. Download progress will appear: `[=====...] 10.0% (142.5 MB / 1.4 GB)`
+
+The build takes 5-10 minutes depending on your connection speed (~1.4 GB download).
 
 ### 3. Start the Server
 
@@ -49,6 +67,8 @@ docker-compose up -d
 ```
 
 ### 4. Authenticate the Server (REQUIRED - First Run Only)
+
+**Note:** This is a SECOND authentication, different from the build authentication. This authenticates the running server.
 
 On first launch, you must authenticate the server with your Hytale account:
 
@@ -59,9 +79,9 @@ docker attach hytale-server
 # In the console, run:
 /auth login device
 
-# Follow the instructions:
-# 1. Visit the URL shown (https://accounts.hytale.com/device)
-# 2. Enter the code displayed
+# Follow the instructions shown in the console:
+# 1. Visit the URL displayed (e.g., https://accounts.hytale.com/device)
+# 2. Enter the device code shown
 # 3. Complete authentication in your browser
 # 4. Authentication persists across restarts!
 

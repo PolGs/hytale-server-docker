@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   hytale-server:
     build: .
@@ -19,20 +17,9 @@ services:
       - HYTALE_BIND=0.0.0.0
 
     # Persistent data volumes
+    # Mount entire Server directory for persistence
     volumes:
-      # World data (player progress, builds, etc.)
-      - ./data/universe:/hytale/Server/universe
-      # Server configuration files
-      - ./data/config.json:/hytale/Server/config.json
-      - ./data/permissions.json:/hytale/Server/permissions.json
-      - ./data/whitelist.json:/hytale/Server/whitelist.json
-      - ./data/bans.json:/hytale/Server/bans.json
-      # Mods directory
-      - ./data/mods:/hytale/Server/mods
-      # Logs directory
-      - ./data/logs:/hytale/Server/logs
-      # Cache directory
-      - ./data/.cache:/hytale/Server/.cache
+      - ./data:/hytale/Server
 
     # Resource limits (adjust based on your VPS)
     deploy:
