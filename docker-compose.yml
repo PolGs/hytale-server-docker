@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  hytale-server:
+    build: .
+    image: hytale-server:latest
+    container_name: hytale-server
+    restart: unless-stopped
+
+    # Port mapping - IMPORTANT: Hytale uses UDP, not TCP!
+    ports:
+      - "5520:5520/udp"
+
+    # Environment variables
+    environment:
+      # JVM memory settings (adjust based on your VPS specs)
+      - JAVA_OPTS=-Xms2G -Xmx4G -XX:AOTCache=Server/HytaleServer.aot
+      - HYTALE_PORT=5520
+      - HYTALE_BIND=0.0.0.0
+
+    # Persistent data volumes
+    volumes:
+      # World data (player progress, builds, etc.)
+      - ./data/universe:/hytale/Server/universe
+      # Server configuration files
+      - ./data/config.json:/hytale/Server/config.json
+      - ./data/permissions.json:/hytale/Server/permissions.json
+      - ./data/whitelist.json:/hytale/Server/whitelist.json
+      - ./data/bans.json:/hytale/Server/bans.json
+      # Mods directory
+      - ./data/mods:/hytale/Server/mods
+      # Logs directory
+      - ./data/logs:/hytale/Server/logs
+      # Cache directory
+      - ./data/.cache:/hytale/Server/.cache
+
+    # Resource limits (adjust based on your VPS)
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 2G
+
+    # Keep container running and allow console access
+    stdin_open: true
+    tty: true
+
+    # Health check (optional - adjust as needed)
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "HytaleServer.jar"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
