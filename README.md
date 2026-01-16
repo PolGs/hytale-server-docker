@@ -18,6 +18,9 @@ Production-ready Docker image for running Hytale dedicated servers. Built with J
 - Docker Compose 2.0+
 - 4GB RAM minimum (6-8GB recommended)
 - Hytale game license
+- 
+## Detailed instructions
+https://hytaleservers.space/blog/setup-hytale-server-docker
 
 ## Quick Start
 
